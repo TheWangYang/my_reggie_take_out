@@ -1,3 +1,8 @@
+# 自定义的不添加的文件
+
+target/
+
+
 # Compiled class file
 *.class
 
