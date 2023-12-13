@@ -139,11 +139,47 @@ public class EmployeeController {
         // 添加排序条件
         lambdaQueryWrapper.orderByDesc(Employee::getUpdateTime);
 
-
         // 执行查询
         employeeService.page(pageInfo, lambdaQueryWrapper);
 
         return R.success(pageInfo);
+    }
 
+    /**
+     * 根据id修改员工信息
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> update(HttpServletRequest httpServletRequest,
+                            @RequestBody Employee employee){
+
+
+        // 得到session中存储的empId
+        Long empId = (Long)httpServletRequest.getSession().getAttribute("employee");
+
+        // 更新用户信息修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+
+        employee.setUpdateUser(empId);
+
+        // 调用mapper更新数据库
+        employeeService.updateById(employee);
+
+        return R.success("员工信息修改成功");
+    }
+
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(HttpServletRequest httpServletRequest, @PathVariable Long id){
+        log.info("根据id查询用户");
+
+        Employee employee = employeeService.getById(id);
+
+        if(employee != null){
+            return R.success(employee);
+        }
+
+        return R.error("没有查询到员工信息");
     }
 }
